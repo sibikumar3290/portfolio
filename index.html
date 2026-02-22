@@ -28,6 +28,14 @@
     }
 
     /* 🌌 Background - Fixed on Right, Layered in Front */
+    :root {
+      --robot-x: 300px;
+      --robot-y: 60px;
+      --robot-scale: 1.15;
+      --robot-opacity: 1;
+      --robot-blur: 0px;
+    }
+
     spline-viewer {
       position: fixed;
       top: 0;
@@ -35,10 +43,12 @@
       width: 100%;
       height: 100%;
       z-index: 0;
-      transition: transform 0.1s ease-out;
+      transition: transform 0.1s ease-out, opacity 0.3s ease;
       background: #ffffff;
       pointer-events: none;
-      transform: translate(200px, 60px) scale(1.15);
+      transform: translate(var(--robot-x), var(--robot-y)) scale(var(--robot-scale));
+      opacity: var(--robot-opacity);
+      filter: blur(var(--robot-blur));
     }
 
     /* Content Wrapper */
@@ -780,27 +790,120 @@
       }
     }
     /* Responsive */
+    /* 📱 Premium Mobile Responsiveness Overhaul */
     @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2.5rem;
+      :root {
+        --robot-x: 250px;
+        --robot-y: 450px;
+        --robot-scale: 0.5;
+        --robot-opacity: 0.35;
+        --robot-blur: 2px;
       }
 
-      .hero h2 {
-        font-size: 1.2rem;
-      }
-
-      h1.section-title {
-        font-size: 2rem;
-      }
-
+      /* 🧭 Navigation Optimization */
       nav {
-        gap: 15px;
-        right: 20px;
-        top: 15px;
+        padding: 10px 14px;
+        right: 10px;
+        top: 10px;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      .nav-links {
+        gap: 8px;
       }
 
       nav a {
-        font-size: 0.85rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 4px 6px;
+      }
+
+      .nav-home {
+        width: 32px;
+        height: 32px;
+      }
+
+      .nav-home svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* 🏗️ Layout & Typography */
+      .container {
+        padding: 0 20px;
+      }
+
+      .hero {
+        padding: 120px 0 60px;
+      }
+
+      .hero h1 {
+        font-size: 2.4rem;
+        letter-spacing: -0.02em;
+      }
+
+      .hero h2 {
+        font-size: 1.15rem;
+        margin-bottom: 15px;
+      }
+
+      .hero p {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        max-width: 100%;
+      }
+
+      h1.section-title {
+        font-size: 1.8rem;
+        margin-bottom: 24px;
+      }
+
+      section {
+        padding: 60px 0;
+      }
+
+      /* 📂 Projects & Skills */
+      .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .project-card {
+        padding: 24px;
+      }
+
+      .skills-accordion {
+        margin-top: 12px;
+      }
+
+      /* 📞 Contact Cards */
+      .contact-list {
+        max-width: 100%;
+        gap: 10px;
+      }
+
+      .contact-list-item {
+        padding: 16px 20px;
+      }
+
+      .contact-label {
+        font-size: 0.9rem;
+      }
+
+      /* 🖼️ Modal Fixes */
+      .modal-content {
+        padding: 30px 24px;
+        width: 92%;
+        max-height: 80vh;
+      }
+
+      .modal-header h2 {
+        font-size: 1.5rem;
       }
     }
   </style>
@@ -1393,11 +1496,12 @@
       const scrollPercent = (scrollY / maxScroll) * 100;
       
       // Move robot to the right as user scrolls down
-      // Preserving the 60px vertical offset and 1.15 scale from CSS
+      // Updating CSS variables for smooth responsive support
       const translateX = (scrollPercent / 600) * 300;
       
       if (splineViewer) {
-        splineViewer.style.transform = `translate(${300 + translateX}px, 60px) scale(1.15)`;
+        const baseTranslateX = window.innerWidth <= 768 ? 250 : 300;
+        document.documentElement.style.setProperty('--robot-x', `${baseTranslateX + translateX}px`);
       }
       
       lastScrollY = scrollY;
