@@ -49,6 +49,7 @@
       transform: translate(var(--robot-x), var(--robot-y)) scale(var(--robot-scale));
       opacity: var(--robot-opacity);
       filter: blur(var(--robot-blur));
+      will-change: transform, opacity; /* Hint for hardware acceleration */
     }
 
     /* Content Wrapper */
@@ -1486,17 +1487,15 @@
       }
     });
 
-    // Scroll-based Robot Movement
+    // Optimized Scroll-based Robot Movement
     const splineViewer = document.getElementById('spline-bg');
-    let lastScrollY = 0;
+    let ticking = false;
 
-    window.addEventListener('scroll', function() {
+    function updateRobot() {
       const scrollY = window.scrollY;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const scrollPercent = (scrollY / maxScroll) * 100;
       
-      // Move robot to the right as user scrolls down
-      // Updating CSS variables for smooth responsive support
       const translateX = (scrollPercent / 600) * 300;
       
       if (splineViewer) {
@@ -1504,8 +1503,15 @@
         document.documentElement.style.setProperty('--robot-x', `${baseTranslateX + translateX}px`);
       }
       
-      lastScrollY = scrollY;
-    });
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        window.requestAnimationFrame(updateRobot);
+        ticking = true;
+      }
+    }, { passive: true }); // Passive listener for better scroll performance
   </script>
 
 </body>
